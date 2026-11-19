@@ -9,7 +9,7 @@ pub fn build(b: *std.Build) void {
         .abi = .none,
 
         // Enabling software float as SIMD is being disabled
-        .cpu_features_add = std.Target.x86.featureSet(&.{.soft_float}),
+        // .cpu_features_add = std.Target.x86.featureSet(&.{.soft_float}),
         .cpu_features_sub = std.Target.x86.featureSet(&.{ .avx, .avx2, .sse, .sse2, .mmx }),
     });
 
@@ -40,9 +40,7 @@ pub fn build(b: *std.Build) void {
 
     const run_cmd = b.addRunArtifact(kernel);
     run_cmd.step.dependOn(&qemu_cmd.step);
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
+    run_cmd.addPassthruArgs();
 
     const run_step = b.step("run", "Run kernel with qemu");
     run_step.dependOn(&run_cmd.step);
